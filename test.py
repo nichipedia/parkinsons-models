@@ -18,7 +18,7 @@ B = X[is1]
 
 ldr = LDR()
 
-ldr.fit(M.values, B.values)
+ldr.fit(X.values, Y.values)
 
 
 #for i in range(0,190):
