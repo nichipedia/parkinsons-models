@@ -176,9 +176,6 @@ class QuadraticDisciminantAnalysis(BaseEstimator):
     If sigk1 is greater the class will be 1. This will return a vector of predictions.
     """
     def predict(self, X):
-        #sigk1 = X.dot(pinv(self.cov)).dot(self.muM) - 0.5 * self.muM.T.dot(pinv(self.cov)).dot(self.muM) + np.log(self.priorM)
-        #sigk2 = X.dot(pinv(self.cov)).dot(self.muB) - 0.5 * self.muB.T.dot(pinv(self.cov)).dot(self.muB) + np.log(self.priorB)
-        #print(self.__getDet(self.covB))
         a = self.__getDet(self.covMTrue)
         if (a != 0.0):
             a = np.log(abs(a))
