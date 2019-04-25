@@ -15,8 +15,12 @@ lr.fit(X, Y)
 
 predMatrix = np.zeros((rows, 1))
 
-for i in range(0, rows):
-    predMatrix[i, 0] = lr.predict(X[i, :])
-    print(predMatrix[i, 0])
+#for i in range(0, rows):
+#    predMatrix[i, 0] = lr.predict(X[i, :])
+#    print(predMatrix[i, 0])
 
-print(accuracy_score(Y, predMatrix))
+predMatrix = lr.predict(X[1,:])
+
+
+
+#print(accuracy_score(Y, predMatrix))

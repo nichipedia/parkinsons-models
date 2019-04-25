@@ -1,46 +1,58 @@
 import numpy as np
+from numpy.linalg import pinv
 
+"""
+The below class implements LinearDiscriminant Analysis using numpy.
+I used the built in covarience function from numpy to calculate my covarience value.
+"""
 class LinearDiscriminantAnalysis():
 
+    """
+    Takes a matrix and returns the mean of each column.
+    It will return a column vector.
+    The shape will be [M, 1] where the param X is [N, M]
+    """
     def getMu(self, X):
-        rows = X.shape[0]
-        mu = np.zeros((1, rows))
-        for i in range(0, rows):
-            mu[0, i] = np.mean(X[i,:])
+        cols = X.shape[1]
+        mu = np.zeros((1, cols))
+        for i in range(0, cols):
+            mu[0, i] = np.mean(X[:,i])
         return mu.T
 
+    """
+    Function to return the covarience matrix of 2 matrices.
+    First it concates them into one matrix. Then it computes the matrix!
+    """
     def getSig(self, X, Y):
-        return np.cov(X, Y)
+        Z = np.concatenate((X, Y), axis=0)
+        return np.cov(Z, rowvar=False)
 
-    #m is 2, b is 1
-    def fit(self, X, M, B):
+    def fit(self, M, B):
         classes2 = M.shape[0]
         classes1 = B.shape[0]
         total = classes2 + classes1
-        priorM = float(classes2)/total
-        priorB = float(classes1)/total
-        muM = self.getMu(M)
-        mu = self.getMu(X)
-        muB = self.getMu(B)
-        cov = np.cov(X)
-        covB = np.cov(B)
-        covM = np.cov(M)
-        self.sigk = X.T.dot(cov).dot(mu) - 0.5 * mu.T.dot(cov).dot(mu) + np.log(0.5)
-        self.sigk1 = X.T.dot(cov).dot(mu) - 0.5 * muM.T.dot(covM).dot(muM) + np.log(priorM)
-        self.sigk2 = X.T.dot(cov).dot(mu) - 0.5 * muB.T.dot(covB).dot(muB) + np.log(priorB)
-        #self.sigk1 = M.T.dot(covM).dot(muM) - 0.5 * muM.T.dot(covM).dot(muM) + np.log(priorM)
-        #self.sigk2 = B.T.dot(covB).dot(muB) - 0.5 * muB.T.dot(covB).dot(muB) + np.log(priorB)
+        self.priorM = float(classes2)/total
+        self.priorB = float(classes1)/total
+        self.muM = self.getMu(M)
+        self.muB = self.getMu(B)
+        self.cov = getSig(M, B)
 
-
-    def predict(self, X):
-        x = X.dot(self.sigk)
-        k = X.dot(self.sigk1)
-        r = X.dot(self.sigk2)
-        print('x:{}, k:{}, r:{}'.format(x, k,r))
-        #print(r-k)
-        if k>=r:
+    """
+    Private function to map the predictions to their respective class.
+    """
+    def _transform(self, k):
+        if k < 0:
             return 1
         else:
             return 2
 
-
+    """
+    Function to predict the classes on the variable X.
+    This will compute the determinates and then compare them. If sigk2 is greater than sigk1 the class will be 2
+    If sigk1 is greater the class will be 1. This will return a vector of predictions.
+    """
+    def predict(self, X):
+        sigk1 = X.dot(pinv(self.cov)).dot(self.muM) - 0.5 * self.muM.T.dot(pinv(self.cov)).dot(self.muM) + np.log(self.priorM)
+        sigk2 = X.dot(pinv(self.cov)).dot(self.muB) - 0.5 * self.muB.T.dot(pinv(self.cov)).dot(self.muB) + np.log(self.priorB)
+        k = sigk1 - sigk2
+        return([self._transform(x) for x in k])
