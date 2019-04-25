@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 df = pd.read_csv('./parkinsons-data.csv')
 
 classification = ['Class']
