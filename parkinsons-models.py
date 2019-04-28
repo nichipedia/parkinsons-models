@@ -13,7 +13,7 @@ def printCrossValScores(clf, X, Y):
     for i in range(0, 10):
         print('CV{} accuracy score: {}, Error Rate: {}'.format(i+1, scores[i], 1 - scores[i]))
     print('----------------------------------------------------------------------------')
-    print('10 Fold CV Score Mean: {}'.format(scores.mean()))
+    print('10 Fold CV Error Percentage Mean: {}'.format(1 - scores.mean()))
     print('')
 
 # Load features and truth
